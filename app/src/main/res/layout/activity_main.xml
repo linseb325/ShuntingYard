@@ -9,33 +9,33 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.linseb325.shuntingyard.MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Process"
-        android:id="@+id/outputButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp"
-        android:onClick="outputButtonClicked" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Processed expression will be here."
-        android:id="@+id/outputTextView"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:weightSum="1">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/inputEditText"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/outputTextView"
-        android:layout_alignEnd="@+id/outputTextView"
-        android:layout_alignLeft="@+id/outputTextView"
-        android:layout_alignStart="@+id/outputTextView"
-        android:editable="false"
-        android:text="Input goes here."
-        android:enabled="false" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/inputEditText"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/processButton"
+            android:layout_gravity="center_horizontal"
+            android:text="PROCESS"
+            android:onClick="processButtonClicked" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/outputTextView"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.10" />
+    </LinearLayout>
 </RelativeLayout>

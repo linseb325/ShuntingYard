@@ -1,5 +1,6 @@
 package com.example.linseb325.shuntingyard;
 
+import java.util.Objects;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -9,15 +10,17 @@ import java.util.StringTokenizer;
 public class Converter
 {
     public StringTokenizer inputTokenizer;
-    private String inputString;
     private Stack<String> operatorStack;
     private Stack<String> outputStack;
 
 
     public Converter(String stringToTokenize)
     {
-        this.inputTokenizer = new StringTokenizer(stringToTokenize, "^*/+-()", true);
-        this.inputString = stringToTokenize;
+        String newString = stringToTokenize.replaceAll("\\s+", "");
+        System.out.println(newString);
+        this.inputTokenizer = new StringTokenizer(newString, "^*/+-()", true);
+        this.operatorStack = new Stack<String>();
+        this.outputStack = new Stack<String>();
     }
 
     public String convert()
@@ -27,64 +30,68 @@ public class Converter
 
         while(this.inputTokenizer.hasMoreTokens()) // While there is still input to be read...
         {
-            currToken = inputTokenizer.nextToken(); // Read in a token.
+            currToken = this.inputTokenizer.nextToken(); // Read in a token.
 
             if(isNumeric(currToken)) // If the current token is a number...
             {
                 this.outputStack.push(currToken);
             }
-            if(isMathOperator(currToken)) // If the current token is an operator...
+            else if(isMathOperator(currToken)) // If the current token is an operator...
             {
-                while((operatorStack.peek() != null && (!isRightAssociative(currToken) && precedence(currToken) <= precedence(operatorStack.peek()))) || (operatorStack.peek() != null && isRightAssociative(currToken) && precedence(currToken) < precedence(operatorStack.peek())))
-                {
-                    outputStack.push(operatorStack.pop());
-                }
-                operatorStack.push(currToken);
-            }
-            if(currToken == "(") // If the current token is an opening parenthesis...
-            {
-                operatorStack.push(currToken);
-            }
-            if(currToken == ")") // If the current token is a closing parenthesis...
-            {
-                while(this.operatorStack.peek() != "(")
+                while((!this.operatorStack.isEmpty() && !isRightAssociative(currToken) && isMathOperator(this.operatorStack.peek()) && precedence(currToken) <= precedence(this.operatorStack.peek()))
+                        ||
+                        (!this.operatorStack.isEmpty() && isRightAssociative(currToken) && isMathOperator(this.operatorStack.peek()) && precedence(currToken) < precedence(this.operatorStack.peek())))
                 {
                     this.outputStack.push(this.operatorStack.pop());
+                }
+                this.operatorStack.push(currToken);
+            }
+            else if(currToken.equals("(")) // If the current token is an opening parenthesis...
+            {
+                this.operatorStack.push(currToken);
+            }
+            else if(currToken.equals(")")) // If the current token is a closing parenthesis...
+            {
+                while(!this.operatorStack.isEmpty() && !this.operatorStack.peek().equals("("))
+                {
+                    this.outputStack.push(this.operatorStack.pop());
+                }
+                if(this.operatorStack.isEmpty())
+                {
+                    System.out.println("isempty");
+                }
+                if(this.operatorStack.peek() == "(")
+                {
+                    System.out.println("Top of op stack is (");
                 }
                 this.operatorStack.pop();
             }
         }
-        while(!operatorStack.isEmpty())
+        while(!this.operatorStack.isEmpty())
         {
-            outputStack.push(operatorStack.pop());
+            this.outputStack.push(this.operatorStack.pop());
         }
-        while(!outputStack.isEmpty()) // Put the contents of the stack into a string in reverse order.
+        while(!this.outputStack.isEmpty()) // Put the contents of the stack into a string in reverse order.
         {
-            answerString = outputStack.pop() + answerString;
+            answerString = this.outputStack.pop() + answerString;
         }
         return answerString;
     }
 
     public int precedence(String operator)
     {
-        if(operator == "^")
+        if(operator.equals("^"))
         {
             return 4;
         }
-        else if(operator == "*" || operator == "/")
+        else if(operator.equals("*") || operator.equals("/"))
         {
             return 3;
         }
-        else if(operator == "+" || operator == "-")
+        else // It must be a "+" or "-"
         {
             return 2;
         }
-        else
-        {
-            System.out.println("Invalid operator for precedence method!");
-            return -1;
-        }
-
     }
 
     public boolean isNumeric(String str)
@@ -111,7 +118,7 @@ public class Converter
 
     public boolean isRightAssociative(String str)
     {
-        if(str == "^")
+        if(str.equals("^"))
         {
             return true;
         }
